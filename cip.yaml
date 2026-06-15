@@ -1,0 +1,10 @@
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: chainguard-image-policy
+spec:
+  images:
+    - glob: "cgr.dev/chainguard/**"
+  authorities:
+    - static:
+        action: pass
