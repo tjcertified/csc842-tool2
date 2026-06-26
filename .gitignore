@@ -1,3 +1,4 @@
 *.key
 *.pub
 /certs
+*.psd1

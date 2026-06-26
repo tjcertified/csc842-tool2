@@ -1,0 +1,39 @@
+apiVersion: policies.kyverno.io/v1
+kind: ImageValidatingPolicy
+metadata:
+  name: validate-docker-hardened-images
+spec:
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: ['v1']
+        operations: ['CREATE', 'UPDATE']
+        resources: ['pods']
+  matchImageReferences:
+    - glob: 'dhi.io/*'
+    - glob: 'registry.dhi.io/*'
+    - glob: 'dhi-registry.docker.com/*'
+  validationConfigurations:
+    mutateDigest: true
+    required: true
+    verifyDigest: true
+  failurePolicy: Fail
+  attestors:
+    - name: cosign
+      cosign:
+        keyless:
+          identities:
+            - subject: ".*" # Wildcard to allow any authorized subject
+              issuer: "https://githubusercontent.com" # Sigstore OIDC issuer (e.g., GitHub Actions)
+        ctlog:
+          url: "https://sigstore.dev"
+  credentials:
+    allowInsecureRegistry: false
+    secrets:
+      - 'dhi-pull-secret'
+  validations:
+    - message: 'Images must be signed'
+      expression: >-
+       images.containers.map(image, verifyImageSignatures(image, [attestors.cosign])).all(result, result > 0)
+
+       

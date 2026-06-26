@@ -39,3 +39,10 @@ Currently, this may not be possible because I am getting an error in the helm in
 
 The output should be something like the following:
 ![image of script running](./screen1.png)
+
+
+
+######
+Updates
+- need to add chunk for creating docker username and retrieving token
+- need to add chunk for creating and filling .psd1 file

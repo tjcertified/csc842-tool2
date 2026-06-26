@@ -1,0 +1,9 @@
+auth:
+  enabled: true
+  aclUsers:
+    default:
+      password: "badpass!"
+      permissions: "~* &* +@all"
+
+valkeyConfig: |
+  appendonly yes

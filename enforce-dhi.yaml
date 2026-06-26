@@ -1,0 +1,28 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-docker-hardened-images
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: verify-dhi-signatures
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+      verifyImages:
+        - imageReferences:
+            - "dhi.io/*"
+            - "registry.dhi.io/*"
+            - "dhi-registry.docker.com/*"
+          mutateDigest: true
+          verifyDigest: true
+          attestors:
+            - count: 1
+              entries:
+                - keys:
+                    secret:
+                      name: dhi-public-key
+                      namespace: kyverno
